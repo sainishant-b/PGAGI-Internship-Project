@@ -10,7 +10,7 @@ from prompts import (
     SYSTEM_PROMPT, GREETING_PROMPT, BASIC_INFO_PROMPT,
     PARSE_BASIC_INFO_PROMPT, INFO_GATHERING_PROMPTS,
     TECH_QUESTION_PROMPT, EVALUATE_ANSWER_PROMPT,
-    FALLBACK_PROMPT, CLOSING_PROMPT
+    FINAL_FEEDBACK_PROMPT, FALLBACK_PROMPT, CLOSING_PROMPT
 )
 from llm_service import LLMService
 from sentiment import analyze_sentiment, get_sentiment_context
@@ -328,8 +328,23 @@ class ConversationManager:
         """Generate the closing message and end the conversation."""
         self.state = ConversationState.ENDED
         name = self.candidate_data.get('full_name', 'Candidate')
+        
+        # If they answered technical questions, give them a final evaluation first
+        final_feedback = ""
+        if not early_exit and self.tech_answers:
+            questions_str = "\n".join(self.tech_questions)
+            answers_str = "\n---\n".join(self.tech_answers)
+            feedback_prompt = FINAL_FEEDBACK_PROMPT.format(
+                questions=questions_str,
+                answers=answers_str
+            )
+            # Fetch final feedback (stateless so it doesn't break history)
+            final_feedback = self.llm.generate_stateless(feedback_prompt) + "\n\n---\n\n"
+
         closing_prompt = CLOSING_PROMPT.format(name=name)
-        return self.llm.send_message(closing_prompt)
+        closing_msg = self.llm.send_message(closing_prompt)
+        
+        return final_feedback + closing_msg
 
     def _handle_fallback(self, user_input: str, sentiment_ctx: str) -> str:
         """Handle unexpected inputs or states."""

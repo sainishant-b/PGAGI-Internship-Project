@@ -117,6 +117,20 @@ Respond politely but firmly redirect the conversation back to the screening proc
 Remind them what information you still need without being condescending. 
 Keep it brief (1-2 sentences)."""
 
+FINAL_FEEDBACK_PROMPT = """The candidate has completed the technical assessment.
+Here are the questions they were asked:
+{questions}
+
+Here are their answers:
+{answers}
+
+Provide a comprehensive but concise final evaluation of their technical performance:
+1. Give a hypothetical score out of 100 based on the accuracy and depth of their responses.
+2. Outline 2-3 specific areas where they excelled.
+3. Provide 2-3 specific, actionable tips on what they can improve and how to do it (e.g. concepts to study, better practices to adopt).
+4. Be highly professional, constructive, and encouraging.
+Format your response using clear markdown headings and bullet points."""
+
 CLOSING_PROMPT = """The screening process is now complete. Generate a professional closing message that:
 1. Thanks the candidate for their time and participation
 2. Summarizes what was covered (info collection + technical assessment)

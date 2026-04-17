@@ -173,6 +173,7 @@ Prompts are centralized in `prompts.py` and designed with these principles:
 
 ## Bonus Features Implemented
 
+- **Automated Final Evaluation**: Generates a comprehensive final evaluation outlining areas of excellence, a hypothetical score, and specific actionable improvement tips.
 - **Sentiment Analysis**: TextBlob-based emotion detection with tone adjustment
 - **Multilingual Support**: Automatic language detection and response matching
 - **Minimalist UI**: Branded Streamlit interface utilizing a custom minimalist aesthetic configuration
