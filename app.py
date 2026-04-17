@@ -52,43 +52,6 @@ st.markdown("""
         margin: 0.25rem 0 0;
     }
 
-    /* Sidebar styling */
-    section[data-testid="stSidebar"] {
-        background-color: #f7f6f3;
-        border-right: 1px solid rgba(55, 53, 47, 0.09);
-    }
-    .sidebar-section {
-        background: #ffffff;
-        border-radius: 4px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        border: 1px solid rgba(55, 53, 47, 0.09);
-        box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 2px 4px;
-    }
-    .sidebar-section h3 {
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: rgba(55, 53, 47, 0.5);
-        margin-bottom: 0.75rem;
-    }
-
-    /* Progress bar */
-    .progress-container {
-        background: rgba(55, 53, 47, 0.09);
-        border-radius: 999px;
-        height: 6px;
-        margin: 0.5rem 0;
-        overflow: hidden;
-    }
-    .progress-fill {
-        background: #37352f;
-        height: 100%;
-        border-radius: 999px;
-        transition: width 0.5s ease;
-    }
-
     /* Chat messages */
     .stChatMessage {
         border-radius: 4px !important;
@@ -188,40 +151,27 @@ def render_sidebar():
         if conv_mgr is None:
             return
 
+        st.divider()
+
         # Progress
         progress = conv_mgr.get_progress_percentage()
-        st.markdown(f"""
-        <div class="sidebar-section">
-            <h3>Screening Progress</h3>
-            <div class="progress-container">
-                <div class="progress-fill" style="width: {progress}%"></div>
-            </div>
-            <p style="font-size:0.8rem; margin:0.25rem 0 0; color:#6b7280;">
-                {conv_mgr.get_current_state_description()} — {progress}%
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("### Screening Progress")
+        st.progress(progress / 100.0)
+        st.caption(f"{conv_mgr.get_current_state_description()} — {progress}%")
+
+        st.divider()
 
         # Candidate info summary
         if conv_mgr.candidate_data:
-            st.markdown('<div class="sidebar-section"><h3>Candidate Info</h3>', unsafe_allow_html=True)
+            st.markdown("### Candidate Info")
             info = format_collected_info(conv_mgr.candidate_data)
             st.text(info)
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.divider()
 
         # Sentiment indicator
         sentiment = conv_mgr.get_latest_sentiment()
-        st.markdown(f"""
-        <div class="sidebar-section">
-            <h3>Candidate Sentiment</h3>
-            <p style="font-size: 1.5rem; text-align: center; margin: 0;">
-                {sentiment['emoji']}
-            </p>
-            <p style="font-size: 0.8rem; text-align: center; color: #6b7280; margin: 0;">
-                {sentiment['label'].capitalize()} ({sentiment['polarity']})
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("### Candidate Sentiment")
+        st.markdown(f"**{sentiment['label'].capitalize()}** ({sentiment['polarity']})")
 
         # GDPR Notice
         st.divider()
