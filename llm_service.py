@@ -112,6 +112,45 @@ class LLMService:
         self.history.pop()
         return "Something went wrong. Please try again. 🔄"
 
+    def generate_stateless(self, prompt: str) -> str:
+        """
+        Send a one-off message without saving to conversation history.
+        Used for internal LLM parsing tasks.
+        """
+        for attempt in range(self.MAX_RETRIES):
+            try:
+                payload = {
+                    "model": self.model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": 0.1,  # Lower temp for parsing tasks
+                    "max_tokens": MAX_OUTPUT_TOKENS,
+                }
+
+                response = requests.post(
+                    self.base_url,
+                    headers=self.headers,
+                    json=payload,
+                    timeout=60,
+                )
+
+                if response.status_code == 200:
+                    data = response.json()
+                    return data["choices"][0]["message"]["content"]
+                elif response.status_code == 429:
+                    if attempt < self.MAX_RETRIES - 1:
+                        time.sleep(self.RETRY_DELAY * (attempt + 1))
+                        continue
+                    return "{}"
+                else:
+                    return "{}"
+
+            except Exception:
+                if attempt < self.MAX_RETRIES - 1:
+                    time.sleep(self.RETRY_DELAY)
+                    continue
+                return "{}"
+        return "{}"
+
     def generate_with_context(self, system_prompt: str, user_message: str) -> str:
         """
         Generate a response with a specific system context.

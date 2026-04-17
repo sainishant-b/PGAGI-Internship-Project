@@ -25,13 +25,13 @@ def analyze_sentiment(text: str) -> dict:
         
         if polarity > 0.2:
             label = "positive"
-            emoji = "😊"
+            emoji = ""
         elif polarity < -0.2:
             label = "negative"
-            emoji = "😟"
+            emoji = ""
         else:
             label = "neutral"
-            emoji = "😐"
+            emoji = ""
         
         return {
             "polarity": round(polarity, 3),
@@ -42,7 +42,7 @@ def analyze_sentiment(text: str) -> dict:
         return {
             "polarity": 0.0,
             "label": "neutral",
-            "emoji": "😐",
+            "emoji": "",
         }
 
 

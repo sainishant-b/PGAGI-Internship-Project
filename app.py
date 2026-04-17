@@ -14,7 +14,7 @@ from utils import format_collected_info
 # ─── Page Configuration ───────────────────────────────────────────────
 st.set_page_config(
     page_title=f"{APP_NAME} — {APP_TAGLINE}",
-    page_icon="🎯",
+    page_icon="💼",
     layout="centered",
     initial_sidebar_state="expanded",
 )
@@ -26,57 +26,64 @@ st.markdown("""
     /* Import clean font */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    /* Global */
+    /* Global styling for Notion-like feel */
     .stApp {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+        color: #37352f;
     }
 
     /* Header */
     .main-header {
-        text-align: center;
-        padding: 1.5rem 0 1rem;
-        border-bottom: 1px solid rgba(128,128,128,0.2);
-        margin-bottom: 1.5rem;
+        text-align: left;
+        padding: 2rem 0 1rem;
+        border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+        margin-bottom: 2rem;
     }
     .main-header h1 {
-        font-size: 1.8rem;
+        font-size: 2.2rem;
         font-weight: 700;
         margin: 0;
-        color: #2563eb;
+        color: #37352f;
+        letter-spacing: -0.03em;
     }
     .main-header p {
-        font-size: 0.95rem;
-        color: #6b7280;
+        font-size: 1rem;
+        color: rgba(55, 53, 47, 0.6);
         margin: 0.25rem 0 0;
     }
 
     /* Sidebar styling */
+    section[data-testid="stSidebar"] {
+        background-color: #f7f6f3;
+        border-right: 1px solid rgba(55, 53, 47, 0.09);
+    }
     .sidebar-section {
-        background: rgba(37, 99, 235, 0.05);
-        border-radius: 8px;
+        background: #ffffff;
+        border-radius: 4px;
         padding: 1rem;
         margin-bottom: 1rem;
-        border: 1px solid rgba(37, 99, 235, 0.1);
+        border: 1px solid rgba(55, 53, 47, 0.09);
+        box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 2px 4px;
     }
     .sidebar-section h3 {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #2563eb;
-        margin-bottom: 0.5rem;
+        color: rgba(55, 53, 47, 0.5);
+        margin-bottom: 0.75rem;
     }
 
     /* Progress bar */
     .progress-container {
-        background: rgba(128,128,128,0.15);
+        background: rgba(55, 53, 47, 0.09);
         border-radius: 999px;
-        height: 8px;
+        height: 6px;
         margin: 0.5rem 0;
         overflow: hidden;
     }
     .progress-fill {
-        background: linear-gradient(90deg, #2563eb, #7c3aed);
+        background: #37352f;
         height: 100%;
         border-radius: 999px;
         transition: width 0.5s ease;
@@ -84,17 +91,35 @@ st.markdown("""
 
     /* Chat messages */
     .stChatMessage {
-        border-radius: 12px !important;
+        border-radius: 4px !important;
+        border: 1px solid rgba(55, 53, 47, 0.09) !important;
+        background-color: #ffffff;
+        box-shadow: none;
+    }
+
+    /* Primary button override */
+    .stButton > button {
+        border-radius: 4px;
+        border: 1px solid rgba(55, 53, 47, 0.16);
+        color: #37352f;
+        background-color: #ffffff;
+        font-weight: 500;
+        transition: background-color 0.1s ease;
+    }
+    .stButton > button:hover {
+        background-color: rgba(55, 53, 47, 0.04);
+        border-color: rgba(55, 53, 47, 0.16);
+        color: #37352f;
     }
 
     /* Footer */
     .footer {
-        text-align: center;
+        text-align: left;
         padding: 1rem 0;
-        color: #9ca3af;
+        color: rgba(55, 53, 47, 0.5);
         font-size: 0.75rem;
-        border-top: 1px solid rgba(128,128,128,0.15);
-        margin-top: 2rem;
+        border-top: 1px solid rgba(55, 53, 47, 0.09);
+        margin-top: 3rem;
     }
 
     /* Hide Streamlit branding */
@@ -150,12 +175,12 @@ def reset_conversation():
 def render_sidebar():
     """Render the sidebar with branding, controls, and candidate info."""
     with st.sidebar:
-        st.markdown(f"## 🎯 {APP_NAME}")
+        st.markdown(f"## {APP_NAME}")
         st.caption(f"{APP_TAGLINE} • v{APP_VERSION}")
         st.divider()
 
         # New session button
-        if st.button("🔄 New Session", use_container_width=True, type="primary"):
+        if st.button("New Session", use_container_width=True):
             reset_conversation()
             st.rerun()
 
@@ -167,7 +192,7 @@ def render_sidebar():
         progress = conv_mgr.get_progress_percentage()
         st.markdown(f"""
         <div class="sidebar-section">
-            <h3>📊 Screening Progress</h3>
+            <h3>Screening Progress</h3>
             <div class="progress-container">
                 <div class="progress-fill" style="width: {progress}%"></div>
             </div>
@@ -179,7 +204,7 @@ def render_sidebar():
 
         # Candidate info summary
         if conv_mgr.candidate_data:
-            st.markdown('<div class="sidebar-section"><h3>📋 Candidate Info</h3>', unsafe_allow_html=True)
+            st.markdown('<div class="sidebar-section"><h3>Candidate Info</h3>', unsafe_allow_html=True)
             info = format_collected_info(conv_mgr.candidate_data)
             st.text(info)
             st.markdown('</div>', unsafe_allow_html=True)
@@ -188,7 +213,7 @@ def render_sidebar():
         sentiment = conv_mgr.get_latest_sentiment()
         st.markdown(f"""
         <div class="sidebar-section">
-            <h3>💭 Candidate Sentiment</h3>
+            <h3>Candidate Sentiment</h3>
             <p style="font-size: 1.5rem; text-align: center; margin: 0;">
                 {sentiment['emoji']}
             </p>
@@ -201,7 +226,7 @@ def render_sidebar():
         # GDPR Notice
         st.divider()
         st.caption(
-            "🔒 **Data Privacy**: All candidate data is handled in compliance "
+            "**Data Privacy**: All candidate data is handled in compliance "
             "with GDPR standards. Data is stored securely and can be deleted "
             "upon request."
         )
@@ -213,15 +238,15 @@ def render_chat():
     # Header
     st.markdown(f"""
     <div class="main-header">
-        <h1>🎯 {APP_NAME}</h1>
+        <h1>{APP_NAME}</h1>
         <p>{APP_TAGLINE} — Technology Recruitment Screening</p>
     </div>
     """, unsafe_allow_html=True)
 
     # Error state
     if st.session_state.error:
-        st.error(f"⚠️ {st.session_state.error}")
-        st.info("💡 Please add your VoidAI API key to the `.env` file and restart the application.")
+        st.error(st.session_state.error)
+        st.info("Please add your VoidAI API key to the `.env` file and restart the application.")
         st.code("VOIDAI_API_KEY=your_key_here", language="text")
         return
 
@@ -236,7 +261,7 @@ def render_chat():
 
     # Display chat history
     for message in st.session_state.messages:
-        avatar = "🎯" if message["role"] == "assistant" else "👤"
+        avatar = "assistant" if message["role"] == "assistant" else "user"
         with st.chat_message(message["role"], avatar=avatar):
             st.markdown(message["content"])
 
@@ -254,18 +279,18 @@ def render_chat():
             except Exception:
                 pass  # Silently handle save errors
 
-        st.info("✅ This screening session has ended. Click **New Session** in the sidebar to start over.")
+        st.info("This screening session has ended. Click **New Session** in the sidebar to start over.")
         return
 
     # Chat input
     if prompt := st.chat_input("Type your message here..."):
         # Display user message
-        with st.chat_message("user", avatar="👤"):
+        with st.chat_message("user", avatar="user"):
             st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
 
         # Generate response
-        with st.chat_message("assistant", avatar="🎯"):
+        with st.chat_message("assistant", avatar="assistant"):
             with st.spinner("Thinking..."):
                 response = conv_mgr.process_input(prompt)
                 st.markdown(response)
@@ -276,7 +301,7 @@ def render_chat():
 
     # Footer
     st.markdown(
-        '<div class="footer">Built with ❤️ by TalentScout • Powered by AI</div>',
+        '<div class="footer">Built by TalentScout • Powered by AI</div>',
         unsafe_allow_html=True,
     )
 

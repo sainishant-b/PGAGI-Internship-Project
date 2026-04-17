@@ -140,13 +140,13 @@ def format_collected_info(candidate_data: dict) -> str:
         Formatted string representation.
     """
     field_labels = {
-        'full_name': '👤 Name',
-        'email': '📧 Email',
-        'phone': '📱 Phone',
-        'experience': '💼 Experience',
-        'position': '🎯 Position',
-        'location': '📍 Location',
-        'tech_stack': '🛠️ Tech Stack',
+        'full_name': 'Name',
+        'email': 'Email',
+        'phone': 'Phone',
+        'experience': 'Experience',
+        'position': 'Position',
+        'location': 'Location',
+        'tech_stack': 'Tech Stack',
     }
     
     lines = []

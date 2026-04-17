@@ -93,7 +93,7 @@ class ConversationManager:
         user_input = sanitize_input(user_input)
 
         if not user_input:
-            return "I didn't catch that. Could you please try again? 😊"
+            return "I didn't catch that. Could you please try again?"
 
         # Check for exit keywords
         if is_exit_keyword(user_input):
@@ -114,7 +114,7 @@ class ConversationManager:
             ConversationState.ASKING_TECH_QUESTIONS: self._handle_tech_answer,
             ConversationState.CLOSING: self._handle_closing,
             ConversationState.ENDED: lambda x, s: (
-                "The conversation has ended. Please click **New Session** to start again. 👋"
+                "The conversation has ended. Please click **New Session** to start again."
             ),
         }
 
@@ -144,8 +144,8 @@ class ConversationManager:
         """
         parse_prompt = PARSE_BASIC_INFO_PROMPT.format(input=user_input)
 
-        # Use a fresh LLM call (no history context needed for parsing)
-        raw = self.llm.send_message(parse_prompt)
+        # Use a fresh stateless LLM call (no history context needed for parsing)
+        raw = self.llm.generate_stateless(parse_prompt)
 
         # Extract JSON from the response
         try:
@@ -237,7 +237,7 @@ class ConversationManager:
         if not is_valid:
             return (
                 "I couldn't quite understand the years of experience. "
-                "Could you please provide a number? (e.g., '3' or '5 years') 💼"
+                "Could you please provide a number? (e.g., '3' or '5 years')"
             )
 
         self.candidate_data['experience'] = years
@@ -276,7 +276,7 @@ class ConversationManager:
             return (
                 "I couldn't identify any technologies from your input. "
                 "Could you please list your tech stack separated by commas? "
-                "(e.g., Python, React, PostgreSQL, Docker) 🛠️"
+                "(e.g., Python, React, PostgreSQL, Docker)"
             )
 
         self.candidate_data['tech_stack'] = technologies
@@ -303,7 +303,7 @@ class ConversationManager:
             f"{ack_response}\n\n---\n\n{questions_response}\n\n"
             "Please take your time to answer these questions. "
             "You can answer all at once or one by one. "
-            "When you're done, type **'done'**. 😊"
+            "When you're done, type **'done'**."
         )
 
     def _handle_tech_answer(self, user_input: str, sentiment_ctx: str) -> str:
@@ -321,7 +321,7 @@ class ConversationManager:
         response = self.llm.generate_with_context(
             self._build_system_context(sentiment_ctx), eval_prompt
         )
-        response += "\n\nFeel free to continue answering, or type **'done'** when finished. 📝"
+        response += "\n\nFeel free to continue answering, or type **'done'** when finished."
         return response
 
     def _handle_closing(self, early_exit: bool = False, *args) -> str:
@@ -356,4 +356,4 @@ class ConversationManager:
         """Get the most recent sentiment analysis result."""
         if self.sentiment_history:
             return self.sentiment_history[-1]
-        return {"polarity": 0.0, "label": "neutral", "emoji": "😐"}
+        return {"polarity": 0.0, "label": "neutral", "emoji": ""}
