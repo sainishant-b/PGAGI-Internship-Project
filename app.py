@@ -5,7 +5,7 @@ An intelligent chatbot for candidate screening in tech recruitment.
 
 import streamlit as st
 from config import APP_NAME, APP_TAGLINE, APP_VERSION
-from llm_service import GeminiService
+from llm_service import LLMService
 from conversation_manager import ConversationManager, ConversationState
 from candidate_store import save_candidate
 from utils import format_collected_info
@@ -125,7 +125,7 @@ def init_session_state():
 def initialize_services():
     """Initialize LLM service and conversation manager."""
     try:
-        llm_service = GeminiService()
+        llm_service = LLMService()
         conv_manager = ConversationManager(llm_service)
         st.session_state.llm_service = llm_service
         st.session_state.conversation_manager = conv_manager
@@ -221,8 +221,8 @@ def render_chat():
     # Error state
     if st.session_state.error:
         st.error(f"⚠️ {st.session_state.error}")
-        st.info("💡 Please add your Google API key to the `.env` file and restart the application.")
-        st.code("GOOGLE_API_KEY=your_key_here", language="text")
+        st.info("💡 Please add your VoidAI API key to the `.env` file and restart the application.")
+        st.code("VOIDAI_API_KEY=your_key_here", language="text")
         return
 
     conv_mgr = st.session_state.conversation_manager
@@ -276,7 +276,7 @@ def render_chat():
 
     # Footer
     st.markdown(
-        '<div class="footer">Built with ❤️ by TalentScout • Powered by Google Gemini</div>',
+        '<div class="footer">Built with ❤️ by TalentScout • Powered by AI</div>',
         unsafe_allow_html=True,
     )
 

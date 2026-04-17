@@ -28,36 +28,51 @@ MULTILINGUAL SUPPORT:
 - Always maintain professional hiring terminology regardless of language
 
 CONVERSATION FLOW:
-1. Greeting → 2. Collect Name → 3. Collect Email → 4. Collect Phone → 
-5. Collect Years of Experience → 6. Collect Desired Position → 7. Collect Location → 
-8. Collect Tech Stack → 9. Ask Technical Questions → 10. Closing
+1. Greeting → 2. Collect Name + Email + Phone (together) →
+3. Collect Years of Experience → 4. Collect Desired Position → 5. Collect Location →
+6. Collect Tech Stack → 7. Ask Technical Questions → 8. Closing
 
 You are currently at step: {current_step}
 Candidate information collected so far: {collected_info}
 """
 
-GREETING_PROMPT = """Generate a warm, professional greeting for a candidate who has just connected 
+GREETING_PROMPT = """Generate a warm, professional greeting for a candidate who has just connected
 with TalentScout's hiring assistant. Include:
 1. A friendly welcome
 2. Brief introduction of TalentScout (technology recruitment agency)
 3. Overview of what the screening will involve (collecting info + technical assessment)
-4. Ask for their full name to get started
+4. Ask them to share their Full Name, Email Address, and Phone Number all in one message to get started
 
 Keep it concise (3-4 sentences). Be warm but professional."""
 
+BASIC_INFO_PROMPT = """The candidate needs to provide their Full Name, Email Address, and Phone Number.
+If they haven't provided all three, politely remind them to include the missing ones:
+Missing fields: {missing_fields}
+Already provided: {provided_fields}
+Keep the reminder brief and friendly."""
+
+PARSE_BASIC_INFO_PROMPT = """Extract the Full Name, Email Address, and Phone Number from the candidate's message below.
+
+Candidate message: \"{input}\"
+
+Return ONLY a valid JSON object with these exact keys (use null if not found):
+{{"full_name": "...", "email": "...", "phone": "..."}}
+
+Rules:
+- full_name: Their complete name as written
+- email: Must contain @ symbol
+- phone: Any sequence of digits/symbols that looks like a phone number
+- Return ONLY the JSON, no explanation"""
+
 INFO_GATHERING_PROMPTS = {
-    "full_name": "The candidate just provided their name: '{input}'. Acknowledge their name warmly and ask for their email address. Keep it brief and conversational.",
-    
-    "email": "The candidate provided their email: '{input}'. Confirm receipt and ask for their phone number. Keep it brief.",
-    
-    "phone": "The candidate provided their phone number: '{input}'. Thank them and ask about their total years of professional experience. Keep it conversational.",
-    
+    "basic_info_received": "The candidate provided their basic info — Name: '{name}', Email: '{email}', Phone: '{phone}'. Acknowledge all three warmly in one brief message and ask about their total years of professional experience.",
+
     "experience": "The candidate mentioned their experience: '{input}'. Acknowledge this positively and ask what position(s) they are interested in or looking for. Keep it brief.",
-    
+
     "position": "The candidate is interested in: '{input}'. Great choice! Now ask about their current location (city/country). Keep it brief.",
-    
+
     "location": "The candidate is located in: '{input}'. Acknowledge and now ask them to list their tech stack — programming languages, frameworks, databases, and tools they are proficient in. Encourage them to be comprehensive as this will help generate relevant assessment questions. Keep it brief but encouraging.",
-    
+
     "tech_stack": "The candidate's tech stack is: '{input}'. Acknowledge their tech stack positively. Let them know you'll now ask some technical questions to assess their proficiency. Keep it brief and encouraging."
 }
 
